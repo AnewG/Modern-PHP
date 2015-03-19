@@ -77,10 +77,13 @@ class CommandOutputDocument implements Documentable {
 
 $documentStore = new DocumentStore();
 // Add HTML document
-$htmlDoc = new HtmlDocument('https://php.net'); $documentStore->addDocument($htmlDoc);
+$htmlDoc = new HtmlDocument('https://php.net'); 
+$documentStore->addDocument($htmlDoc);
 // Add stream document
-$streamDoc = new StreamDocument(fopen('stream.txt', 'rb')); $documentStore->addDocument($streamDoc);
+$streamDoc = new StreamDocument(fopen('stream.txt', 'rb')); 
+$documentStore->addDocument($streamDoc);
 // Add terminal command document
-$cmdDoc = new CommandOutputDocument('cat /etc/hosts'); $documentStore->addDocument($cmdDoc);
+$cmdDoc = new CommandOutputDocument('cat /etc/hosts'); 
+$documentStore->addDocument($cmdDoc);
 print_r($documentStore->getDocuments());
 ```
