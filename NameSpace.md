@@ -26,3 +26,44 @@ namespace Oreilly\ModernPHP
 
 namespace提供了import和alias来解决这个问题。
 
+import，alias 在5.3版本下支持类，接口与命名空间。5.6支持函数与常量
+
+```php
+# namespace without alias
+<?php
+$response = new \Symfony\Component\HttpFoundation\Response('Oops',400);
+$response->send();
+$response2 = new \Symfony\Component\HttpFoundation\Response('Success',200);
+```
+
+```php
+# namespace with alias 
+use Symfony\Component\HttpFoundation\Response;
+$response ＝ new Response('Oops',400);
+$response->send();
+```
+
+```php
+# namespace with custom alias 
+use Symfony\Component\HttpFoundation\Response as Res;
+$response ＝ new Res('Oops',400);
+$response->send();
+```
+
+import与alias的use与namespace的规则一样要在php文件顶部紧挨着 `<?php` 的下一行或namespace的定义之后。
+你没有必要在导入的命名空间头部加上`\`，php默认导入的命名空间为完全限定名称
+use关键字必须存在与全局作用域，因为它是在编译时被处理
+
+5.6之后可以导入函数与常量
+
+```php
+<?php
+use func Namespace\functionName;
+functionName();
+```
+
+```php
+<?php
+use constant Namespace\CONST_NAME;
+echo CONST_NAME;
+```
