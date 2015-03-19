@@ -12,7 +12,7 @@ subname-space
 namespace Oreilly\ModernPHP
 ```
 
-属于同个namespace的类不一定非得定义在一个文件下。可在每个文件顶部都使用同一个namespace以标记这些文件在同一个命名空间下。
+属于同个namespace的类不一定非得定义在一个文件下。可在每个文件顶部都使用同一个namespace以标记这些文件在同一个命名空间。
 
 在使用namespace之前，php开发者使用 Zend-style 的类命名方式（源自 Zend 框架）。
 
@@ -22,11 +22,11 @@ namespace Oreilly\ModernPHP
 # Zend_Cloud_DocumentService_Adapter_WindowsAzure_Query => Zend/Cloud/DocumentService/Adapter/WindowsAzure/Query.php
 ```
 
-这种方式对懒人来说的缺点就是太TM长了。
+这种方式对懒人来说的缺点就是写很多类名时太TM长了。
 
 namespace提供了import和alias来解决这个问题。
 
-import，alias 在5.3版本下支持类，接口与命名空间。5.6支持函数与常量
+import，alias 在5.3版本下支持类，接口与命名空间导入。5.6支持函数与常量导入。
 
 ```php
 # namespace without alias
@@ -51,7 +51,9 @@ $response->send();
 ```
 
 import与alias的use与namespace的规则一样要在php文件顶部紧挨着 `<?php` 的下一行或namespace的定义之后。
-你没有必要在导入的命名空间头部加上`\`，php默认导入的命名空间为完全限定名称
+
+你没有必要在导入的命名空间头部加上`\`，php默认导入的命名空间为完全限定名称。
+
 use关键字必须存在与全局作用域，因为它是在编译时被处理。
 
 5.6之后可以导入函数与常量
