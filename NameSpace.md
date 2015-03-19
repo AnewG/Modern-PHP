@@ -67,3 +67,41 @@ functionName();
 use constant Namespace\CONST_NAME;
 echo CONST_NAME;
 ```
+多个namespace在一个文件中（极度不推荐）
+
+```php
+<?php
+namespace Foo{
+
+}
+
+namespace Bar{
+
+}
+```
+
+若没有附带namespace的调用类，方法或常量。php会默认这些属于当前命名空间下。
+
+如果想指定namespace，则要使用完全限定名称来调用，或使用use来导入。
+
+```php
+<?php
+namespace My\App
+＃ Unqualified class name inside another namespace
+class Foo {
+    public function doSomething() {
+        $exception = new Exception(); // php will search \My\App\Exception
+    }
+}
+```
+
+```php
+<?php
+namespace My\App
+＃ Qualified class name inside another namespace
+class Foo {
+    public function doSomething() {
+        $exception = new \Exception(); // php will search \Exception
+    }
+}
+```
