@@ -87,3 +87,7 @@ $cmdDoc = new CommandOutputDocument('cat /etc/hosts');
 $documentStore->addDocument($cmdDoc);
 print_r($documentStore->getDocuments());
 ```
+
+5.4 新加入了 Traits，它既不是接口也不是类。与 Ruby 的 composable modules 或 mixins 类似。
+
+它能被加入到一个或多个已经存在的类中。它声明了类能做什么（接口特性），同时也包含了具体实现（类特性）
