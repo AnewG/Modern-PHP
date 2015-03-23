@@ -9,6 +9,55 @@ Example:
 ```php
 <?php
 function myGenerator() {
-yield 'value1'; yield 'value2'; yield 'value3';
+    yield 'value1'; 
+    yield 'value2'; 
+    yield 'value3';
+}
+```
+
+调用该迭代器函数，php将返回一个与之关联的对象。
+
+该对象可被foreach之类的函数迭代，每次迭代 generators 将提供一个具体的值（停留在下一个 yield 之前）。
+
+```php
+<?php
+foreach (myGenerator() as $yieldedValue) {
+    echo $yieldedValue, PHP_EOL; 
+}
+
+// This outputs:
+//    value1
+//    value2
+//    value3
+```
+
+之前迭代器的解决方案：
+
+```php
+<?php
+function makeRange($length) {
+    $dataset = [];
+    for ($i = 0; $i < $length; $i++) {
+        $dataset[] = $i;
+    }
+    return $dataset; 
+}
+$customRange = makeRange(1000000); 
+foreach ($customRange as $i) {
+    echo $i, PHP_EOL; 
+}
+```
+
+generators 的解决方案：
+
+```php
+<?php
+function makeRange($length) {
+    for ($i = 0; $i < $length; $i++) { 
+        yield $i;
+    } 
+}
+foreach (makeRange(1000000) as $i) { 
+    echo $i, PHP_EOL;
 }
 ```
