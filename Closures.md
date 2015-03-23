@@ -44,3 +44,5 @@ $example = function ($arg) use ($message) {
 $example("hello"); // "hello world"
 ?>
 ```
+
+闭包和匿名函数（其实就是没定义名字的函数）其实是不同的东西，但在PHP里他们是一样的。
