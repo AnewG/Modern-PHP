@@ -108,7 +108,7 @@ if ($isEmail !== false) {
 * 绝不明文存储
 * 不通过邮件发送密码（一旦发送表示网站明文存储并且能读取用户密码），使用带有效时间并且需要验证的token附带在url中发送来代替发送密码。
 * 使用 bcrypt 加密密码
-* 尽可能使用 Password Hashing API(如无法使用 php 5.5 以上，可以使用 [password-compat](https://packagist.org/packages/ircmaxell/password-compat)
+* 尽可能使用 Password Hashing API(如无法使用 php 5.5 以上，可以使用 [password-compat](https://packagist.org/packages/ircmaxell/password-compat) )
 
 ## 用户注册
 
