@@ -108,7 +108,7 @@ if ($isEmail !== false) {
 * 绝不明文存储
 * 不通过邮件发送密码（一旦发送表示网站明文存储并且能读取用户密码），使用带有效时间并且需要验证的token附带在url中发送来代替发送密码。
 * 使用 bcrypt 加密密码
-* 尽可能使用 Password Hashing API
+* 尽可能使用 Password Hashing API(如无法使用 php 5.5 以上，可以使用 [password-compat](https://packagist.org/packages/ircmaxell/password-compat)
 
 ## 用户注册
 
@@ -166,3 +166,65 @@ try{
 
 密码字段推荐 `varchar(255)`
 
+## 用户登陆
+
+请求：
+
+```php
+# POST /login.php HTTP/1.1
+# Content-Length: 43
+# Content-Type: application/x-www-form-urlencoded
+# email=john@example.com&password=sekritshhh!
+```
+
+```php
+<?php
+session_start(); 
+
+try{
+    // Get email address from request body
+    $email = filter_input(INPUT_POST, 'email');
+
+    // Get password from request body
+    $password = filter_input(INPUT_POST, 'password');
+
+    // Find account with email address (THIS IS PSUEDO-CODE)
+    $user = User::findByEmail($email);
+
+    // Verify password with account password hash
+    if (password_verify($password, $user->password_hash) === false) {
+        throw new Exception('Invalid password');
+    }
+
+    // Re-hash password if necessary(see not below)
+    $currentHashAlgorithm = PASSWORD_DEFAULT;
+    $currentHashOptions = array('cost' => 15);
+    $passwordNeedsRehash = password_needs_rehash(
+        $user->password_hash,
+        $currentHashAlgorithm,
+        $currentHashOptions
+    );
+
+    if ($passwordNeedsRehash === true) {
+        // Save new password hash (THIS IS PSUEDO-CODE)
+
+        $user->password_hash = password_hash(
+            $password,
+            $currentHashAlgorithm,
+            $currentHashOptions
+        );
+        $user->save();
+    }
+
+    // Save login status to session
+    $_SESSION['user_logged_in'] = 'yes';
+    $_SESSION['user_email'] = $email;
+
+    // Redirect to profile page
+    header('HTTP/1.1 302 Redirect');
+    header('Location: /user-profile.php');
+} catch (Exception $e) {
+    header('HTTP/1.1 401 Unauthorized');
+    echo $e->getMessage();
+}
+```
