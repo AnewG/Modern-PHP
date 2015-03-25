@@ -344,3 +344,29 @@ try {
 
 连接信息的隐私性要注意保护，不要加到版本控制里，更别放到公共仓库里。
 
+使用 prepare 语句来绑定查询变量，保证安全性
+
+```php
+<?php
+$sql = 'SELECT id FROM users WHERE email = :email';
+$statement = $pdo->prepare($sql);
+$email = filter_input(INPUT_GET, 'email');
+$statement->bindValue(':email', $email); // default string type
+
+$sql = 'SELECT email FROM users WHERE id = :id';
+$statement = $pdo->prepare($sql);
+$userId = filter_input(INPUT_GET, 'id');
+$statement->bindValue(':id', $userId, PDO::PARAM_INT);
+```
+
+* PDO::PARAM_BOOL
+* PDO::PARAM_NULL
+* PDO::PARAM_INT
+* PDO::PARAM_STR (default)
+    
+[一些PDO预定义常量](http://php.net/manual/en/pdo.constants.php)
+
+## 获取查询结果
+
+通过 execute 执行 SQL 之后，若是非 INSERT，UPDATE或DELETE操作，你还需获取数据库返回的纪录。
+
