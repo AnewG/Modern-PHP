@@ -106,4 +106,63 @@ if ($isEmail !== false) {
 # 密码安全
 
 * 绝不明文存储
-* todo
+* 不通过邮件发送密码（一旦发送表示网站明文存储并且能读取用户密码），使用带有效时间并且需要验证的token附带在url中发送来代替发送密码。
+* 使用 bcrypt 加密密码
+* 尽可能使用 Password Hashing API
+
+## 用户注册
+
+请求：
+
+```php
+# POST /register.php HTTP/1.1
+# Content-Length: 43
+# Content-Type: application/x-www-form-urlencoded
+# email=john@example.com&password=sekritshhh!
+```
+
+```php
+<?php
+try{
+    // Validate email
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        throw new Exception('Invalid email');
+    } 
+
+    // Validate password
+    $password = filter_input(INPUT_POST, 'password');
+    if (!$password || mb_strlen($password) < 8) {
+        throw new Exception('Password must contain 8+ characters');
+    }
+
+    // Create password hash
+    $passwordHash = password_hash(
+       $password,
+       PASSWORD_DEFAULT,
+       ['cost' => 12]
+    );
+
+    if ($passwordHash === false) {
+        throw new Exception('Password hash failed');
+    }
+
+    // Create user account (THIS IS PSUEDO-CODE)
+    $user = new User();
+    $user->email = $email;
+    $user->password_hash = $passwordHash;
+    $user->save();
+
+    // Redirect to login page
+    header('HTTP/1.1 302 Redirect');
+    header('Location: /login.php');
+
+} catch (Exception $e) {
+    // Report error
+    header('HTTP/1.1 400 Bad request');
+    echo $e->getMessage();
+}
+```
+
+密码字段推荐 `varchar(255)`
+
