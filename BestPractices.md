@@ -370,3 +370,107 @@ $statement->bindValue(':id', $userId, PDO::PARAM_INT);
 
 通过 execute 执行 SQL 之后，若是非 INSERT，UPDATE或DELETE操作，你还需获取数据库返回的纪录。
 
+```php
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=world", 'my_user', 'my_pass');
+$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+// 缓存结果集到php端将有更多的操作可用，但内存占用也会加大
+// 不缓存到php端，则使用连接资源向数据库端每次获取数据，虽然php端内存压力小了，但是会明显加大数据库端的负载。
+// 对于同一个连接来说，除非结果集被服务端获取完，否则将无法返回其他查询结果。
+
+$uresult = $pdo->query("SELECT Name FROM City");
+if ($uresult) {
+   while ($row = $uresult->fetch(PDO::FETCH_ASSOC)) {
+       echo $row['Name'] . PHP_EOL;
+   }
+}
+?>
+```
+
+[其他的FETCH_STYLE](http://php.net/manual/zh/pdostatement.fetch.php)
+
+```php
+<?php
+// Build and execute SQL query
+$sql = 'SELECT id, email FROM users WHERE email = :email'; 
+$statement = $pdo->prepare($sql);
+$email = filter_input(INPUT_GET, 'email'); 
+$statement->bindValue(':email', $email, PDO::PARAM_INT); $statement->execute();
+// Iterate results
+$results = $statement->fetchAll(PDO::FETCH_ASSOC); 
+// results 已经包含全部结果集
+foreach ($results as $result) {
+    echo $result['email']; 
+}
+```
+
+获取指定列结果集
+
+```php
+<?php
+// Build and execute SQL query
+$sql = 'SELECT id, email FROM users WHERE email = :email'; 
+$statement = $pdo->prepare($sql);
+$email = filter_input(INPUT_GET, 'email'); 
+$statement->bindValue(':email', $email, PDO::PARAM_INT); 
+$statement->execute();
+// Iterate results
+// The query result column order matches the column order specified in the SQL query.
+while (($email = $statement->fetchColumn(1)) !== false) { 
+    echo $email;
+}
+```
+
+## 事务
+
+PDO 同样支持事务
+
+```php
+<?php
+require 'settings.php';
+// PDO connection
+try {
+    $pdo = new PDO(
+            sprintf(
+                'mysql:host=%s;dbname=%s;port=%s;charset=%s',
+                $settings['host'],
+                $settings['name'],
+                $settings['port'],
+                $settings['charset']
+            ),
+            $settings['username'],
+            $settings['password']
+    );
+} catch (PDOException $e) {
+    // Database connection failed
+    echo "Database connection failed";
+    exit; 
+}
+// Statements
+$stmtSubtract = $pdo->prepare('
+    UPDATE accounts
+    SET amount = amount - :amount
+    WHERE name = :name
+');
+    $stmtAdd = $pdo->prepare('
+    UPDATE accounts
+    SET amount = amount + :amount
+    WHERE name = :name
+');
+// Start transaction
+$pdo->beginTransaction();
+// Withdraw funds from account 1
+$fromAccount = 'Checking';
+$withdrawal = 50;
+$stmtSubtract->bindParam(':name', $fromAccount);
+$stmtSubtract->bindParam(':amount', $withDrawal, PDO::PARAM_INT);
+$stmtSubtract->execute();
+// Deposit funds into account 2
+$toAccount = 'Savings';     
+$deposit = 50;
+$stmtAdd->bindParam(':name', $toAccount);
+$stmtAdd->bindParam(':amount', $deposit, PDO::PARAM_INT);
+$stmtAdd->execute();
+// Commit transaction
+$pdo->commit();
+```
