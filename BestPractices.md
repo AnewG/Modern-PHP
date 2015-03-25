@@ -26,7 +26,7 @@ $input = '<p><script>alert("You won the Nigerian lottery!");</script></p>';
 echo htmlentities($input, ENT_QUOTES, 'UTF-8');
 ```
 
-过滤html输入，[HTML Purifier](http://htmlpurifier.org/) 是更好的选择。
+过滤html输入，[HTML Purifier](http://htmlpurifier.org/) 是更好的选择。一些php模版引擎会自动完成过滤工作
 
 不要自己写正则来过滤，正则又复杂又慢，html输入不一定是规范的，这一方法有很大的安全隐患。
 
@@ -79,3 +79,31 @@ $string = "\nIñtërnâtiônàlizætiøn\t"; $safeString = filter_var(
 [查看更多filter_var用法](http://php.net/ manual/function.filter-var.php)
 
 ## 验证
+
+与过滤不同，验证数据并不改变数据本身，只是检查数据是否符合你的期望。
+
+可以使用 `filter_var` 配合 `FIL TER_VALIDATE_*` 标志位来验证数据。
+
+```php
+<?php
+$input = 'john@example.com';
+$isEmail = filter_var($input, FILTER_VALIDATE_EMAIL); 
+if ($isEmail !== false) {
+    echo "Success"; 
+}else{
+    echo "Fail"; 
+}
+```
+
+以下是其他推荐的验证组件。
+
+[aura/filter](https://packagist.org/packages/aura/filter)
+
+[respect/validation](https://packagist.org/packages/respect/validation)
+
+[symfony/validator](https://packagist.org/packages/symfony/validator)
+
+# 密码安全
+
+* 绝不明文存储
+* todo
