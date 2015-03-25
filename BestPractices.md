@@ -228,3 +228,52 @@ try{
     echo $e->getMessage();
 }
 ```
+
+# 时间处理
+
+php 5.2 之后推荐使用 `DateTime`,`DateInterval`,`DateTimeZone`来处理时间相关的操作。
+
+第一步，设置时区。两种方式
+
+```php
+# declare the default time zone in the php.ini file like this:date.timezone = 'America/New_York';
+date_default_timezone_set('America/New_York');
+```
+
+第二步，实例化
+
+```php
+# $datetime = new DateTime(); 
+# Without arguments, the DateTime class constructor creates an instance that repre‐ sents the current date and time.
+$datetime = new DateTime('2014-04-27 5:03 AM');
+```
+
+时间的来源格式不尽相同，使用 `DateTime::createFromFormat()` 静态方法来格式化并创建实例
+
+```php
+$datetime = DateTime::createFromFormat('M j, Y H:i:s', 'Jan 2, 2014 23:04:12');
+# strtotime ('Jan 2, 2014 23:04:12');
+```
+
+使用 `DateInterval` 来处理时间间隔。
+
+* Y (years)
+* M (months)
+* D (days)
+* W (weeks)
+* H (hours)
+* M (minutes) 
+* S (seconds)
+
+举例，P2D 表示两天。P2DT5H2M 两天五小时两分钟。
+
+```php
+<?php
+// Create DateTime instance
+$datetime = new DateTime('2014-01-01 14:00:00');
+// Create two weeks interval
+$interval = new DateInterval('P2W');
+// Modify DateTime instance
+$datetime->add($interval);
+echo $datetime->format('Y-m-d H:i:s');
+```
