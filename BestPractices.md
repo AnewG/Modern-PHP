@@ -316,3 +316,31 @@ $datetime = new \DateTime('2014-08-20', $timezone);
 $datetime->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
 ```
 
+# 数据库
+
+使用 PDO 来处理数据库操作
+
+通过配置 DSN 使得 PDO 将 php 与数据库连接起来
+
+DSN 配置由数据库驱动名开头 (e.g., mysql or sqlite),每种数据库格式不尽相同，但大体都包含以下信息:
+
+* Hostname or IP address
+* Port number
+* Database name
+* Character set
+
+[DSN格式参考](http://php.net/manual/pdo.drivers.php)
+
+```php
+<?php 
+try {
+    $pdo = new PDO( 'mysql:host=127.0.0.1;dbname=books;port=3306;charset=utf8', 'USERNAME','PASSWORD');
+} catch (PDOException $e) {
+    // Database connection failed
+    echo "Database connection failed";
+    exit; 
+}
+```
+
+连接信息的隐私性要注意保护，不要加到版本控制里，更别放到公共仓库里。
+
