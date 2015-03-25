@@ -255,7 +255,7 @@ $datetime = DateTime::createFromFormat('M j, Y H:i:s', 'Jan 2, 2014 23:04:12');
 # strtotime ('Jan 2, 2014 23:04:12');
 ```
 
-使用 `DateInterval` 来处理时间间隔。
+使用 `DateInterval` ，`DatePeriod` 来处理时间间隔。
 
 * Y (years)
 * M (months)
@@ -277,3 +277,42 @@ $interval = new DateInterval('P2W');
 $datetime->add($interval);
 echo $datetime->format('Y-m-d H:i:s');
 ```
+
+```php
+$dateStart = new \DateTime();
+$dateInterval = \DateInterval::createFromDateString('-1 day'); 
+$datePeriod = new \DatePeriod($dateStart, $dateInterval, 3); 
+foreach ($datePeriod as $date) {
+    echo $date->format('Y-m-d'), PHP_EOL; 
+}
+# This outputs:
+#     2014-12-08
+#     2014-12-07
+#     2014-12-06
+#     2014-12-05
+```
+
+```php
+<?php
+$start = new DateTime();
+$interval = new DateInterval('P2W');
+$period = new DatePeriod($start, $interval, 3);
+foreach ($period as $nextDateTime) {
+    echo $nextDateTime->format('Y-m-d H:i:s'), PHP_EOL;
+}
+```
+
+第三方组件 [Cabon](https://github.com/briannesbitt/Carbon)
+
+切换不同时区的话，使用 `DateTimeZone`
+
+```php
+<?php
+$timezone = new DateTimeZone('America/New_York'); 
+$datetime = new DateTime('2014-08-20', $timezone);
+
+$timezone = new DateTimeZone('America/New_York'); 
+$datetime = new \DateTime('2014-08-20', $timezone); 
+$datetime->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
+```
+
