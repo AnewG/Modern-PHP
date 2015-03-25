@@ -474,3 +474,132 @@ $stmtAdd->execute();
 // Commit transaction
 $pdo->commit();
 ```
+
+# 多字节字符串处理
+
+除英文外的大部分语言都无法仅用一个字节来表示。主流大多数使用 UTF-8 编码。
+
+使用 [mbstring](http://php.net/manual/book.mbstring.php) 来处理多字节字符串。
+
+比如说用 mb_strlen 来代替 strlen 统计字符串长度。
+
+使用 `mb_detect_encoding()` 与 `mb_convert_encoding()` 函数来检测和转换字符编码。
+
+## 输出 UTF-8 编码的数据
+
+```php
+# set default_charset = "UTF-8"; in php.ini
+header('Content-Type: application/json;charset=utf-8');
+# or in html page, <meta charset="UTF-8"/>
+```
+
+# 流（Streams）
+
+即使 php 4.3 之后就引入了 streams，但可以说这一特性是使用人数最少的之一。
+
+streams 是用来在源与目的之间传输数据的，仅此而已。源可以是文件，进程，网络连接，zip压缩包，标准输入输出等等资源，只要其被 stream wrappers 封装成统一的接口。
+
+PS：作者将stream比喻为一端流向另一端的水流，我们可以对水流做任何操作，比如加水，拉闸限水等等。。。
+
+归纳来说所有的 Stream Wrappers 都是实现了
+
+* 打开连接
+* 读写数据
+* 关闭连接
+
+几个动作。
+
+每个 stream 包含了 scheme 和 target，`<scheme>://<target>`
+
+```php
+<?php
+# Flickr API with HTTP stream wrapper
+$json = file_get_contents(
+    'http://api.flickr.com/services/feeds/photos_public.gne?format=json'
+);
+```
+
+像 `file_get_contents()`, `fopen()`, `fwrite()`, `fclose()` 之类的函数底层都实现了对各种 Stream Wrappers 的支持
+
+```php
+<?php
+$handle = fopen('/etc/hosts', 'rb'); 
+while (feof($handle) !== true) {
+    echo fgets($handle);
+}
+fclose($handle);
+```
+
+自定义 Stream Wrapper
+
+[链接1](http://php.net/manual/en/stream.streamwrapper.example-1.php)
+[链接2](http://php.net/manual/en/class.streamwrapper.php)
+
+## Stream 上下文
+
+```php
+<?php
+$requestBody = '{"username":"josh"}'; 
+$context = stream_context_create(array(
+    'http' => array(
+    'method' => 'POST',
+    'header' => "Content-Type: application/json;charset=utf-8;\r\n" .
+                "Content-Length: " . mb_strlen($requestBody),
+                'content' => $requestBody
+    )
+));
+$response = file_get_contents('https://my-api.com/users', false, $context);
+```
+
+## Stream 过滤器
+
+```php
+<?php
+$handle = fopen('data.txt', 'rb'); 
+stream_filter_append($handle, 'string.toupper'); 
+while(feof($handle) !== true) {
+    echo fgets($handle); // <-- Outputs all uppercase characters 
+}
+fclose($handle);
+```
+
+自定义过滤器
+
+```php
+class DirtyWordsFilter extends php_user_filter {
+    /**
+     * @param resource $in       Incoming bucket brigade
+     * @param resource $out      Outgoing bucket brigade
+     * @param int      $consumed Number of bytes consumed
+     * @param bool     $closing  Last bucket brigade in stream?
+     */
+    public function filter($in, $out, &$consumed, $closing) {
+        $words = array('grime', 'dirt', 'grease'); $wordData = array();
+        foreach ($words as $word) {
+            $replacement = array_fill(0, mb_strlen($word), '*');
+            $wordData[$word] = implode('', $replacement);
+        }
+        $bad = array_keys($wordData);
+        $good = array_values($wordData);
+        // Iterate each bucket from incoming bucket brigade
+        while ($bucket = stream_bucket_make_writeable($in)) {
+            // Censor dirty words in bucket data
+            $bucket->data = str_replace($bad, $good, $bucket->data);
+            // Increment total data consumed
+            $consumed += $bucket->datalen;
+            // Send bucket to downstream brigade
+            stream_bucket_append($out, $bucket);
+        }
+        return PSFS_PASS_ON; 
+    }
+}
+
+stream_filter_register('dirty_words_filter', 'DirtyWordsFilter');
+
+$handle = fopen('data.txt', 'rb'); 
+stream_filter_append($handle, 'dirty_words_filter'); 
+while (feof($handle) !== true) {
+    echo fgets($handle); // <-- Outputs censored text 
+}
+fclose($handle);
+```
