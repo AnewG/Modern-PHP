@@ -669,3 +669,57 @@ restore_exception_handler();
 
 相关函数主要有 trigger_error 与 [error_reporting](http://php.net/manual/function.error-reporting.php)
 
+四大原则：
+
+* 永远打开错误收集机制
+* 开发环境打开错误提示
+* 生产环境绝不提示错误
+* 开发和生产环境都用日志纪录错误
+
+开发环境推荐配置：
+
+```php
+; Display errors
+  display_startup_errors = On
+  display_errors = On
+; Report all errors
+  error_reporting = -1
+; Turn on error logging
+  log_errors = On
+```
+
+生产环境推荐配置：
+
+```php
+; DO NOT display errors
+  display_startup_errors = Off
+  display_errors = Off
+; Report all errors EXCEPT notices
+  error_reporting = E_ALL & ~E_NOTICE ; Turn on error logging
+  log_errors = On
+```
+
+与异常一样，也可以设置全局处理函数
+
+```php
+<?php
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    if (!(error_reporting() & $errno)) {
+        // Error is not specified in the error_reporting // setting, so we ignore it.
+        return;
+    }
+    throw new \ErrorException($errstr, $errno, 0, $errfile, $errline); 
+});
+```
+
+PS:
+
+set_error_handler 并不能处理所有错误。包括 `E_ERROR`, `E_PARSE`, `E_CORE_ERROR`, `E_CORE_WARNING`, `E_COMPILE_ERROR`, `E_COMPILE_WARNING`
+
+这些情况下 `register_shutdown_function` 与 `error_get_last` 是更好的解决方案。
+
+优秀的第三方组件：
+
+[错误处理](https://github.com/filp/whoops)
+
+[日志纪录](https://github.com/Seldaek/monolog)
