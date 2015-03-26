@@ -603,3 +603,69 @@ while (feof($handle) !== true) {
 }
 fclose($handle);
 ```
+
+# 错误与异常
+
+可以使用 `@` 操作符来抑制错误提示，但这个极度不推荐的。正确的做法是用 `try{}catch{}` 和 `throw` 处理和抛出异常。
+
+## 异常
+
+```php
+<?php
+$exception = new Exception('Danger, Will Robinson!', 100);
+$code = $exception->getCode(); // 100
+$message = $exception->getMessage(); // 'Danger...'
+
+throw new Exception('Something went wrong. Time for lunch!'); // un catch
+
+try {
+    $pdo = new PDO('mysql://host=wrong_host;dbname=wrong_name'); 
+} catch (PDOException $e) {
+    // Inspect the exception for logging
+    $code = $e->getCode();
+    $message = $e->getMessage();
+    // Display a nice message to the user
+    echo 'Something went wrong. Check back soon, please.';
+    exit; 
+}
+
+try {
+    throw new Exception('Not a PDO exception');
+    $pdo = new PDO('mysql://host=wrong_host;dbname=wrong_name'); 
+} catch (PDOException $e) {
+    // Handle PDO exception
+    echo "Caught PDO exception"; 
+} catch (Exception $e) {
+    // Handle all other exceptions
+    echo "Caught generic exception"; 
+} finally {
+    // Always do this,since php 5.5
+    echo "Always do this"; 
+}
+
+```
+
+php 内置的异常类
+
+[Exception](http://php.net/manual/en/class.exception.php)
+
+[ErrorException](http://php.net/manual/en/class.errorexception.php)
+
+SPL(php标准库)提供了更多的[异常子类](http://php.net/manual/en/spl.exceptions.php)
+
+或者设置全局的异常处理函数，如下。
+
+```php
+<?php
+// Register your exception handler set_exception_handler(function (Exception $e) {
+    // Handle and log exception
+});
+// Your code goes here...
+// Restore previous exception handler
+restore_exception_handler();
+```
+
+## 错误
+
+相关函数主要有 trigger_error 与 [error_reporting](http://php.net/manual/function.error-reporting.php)
+
