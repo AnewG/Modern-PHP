@@ -113,3 +113,20 @@ BDD的重点是通过与利益相关者的讨论取得对预期的软件行为�
 
 [PHPspec](http://www.phpspec.net/en/latest/)
 
+# 持续集成
+
+[TravisCI](https://travis-ci.org/)
+
+# 性能分析
+
+[XDebug](http://xdebug.org/)
+
+[Xhprof](http://xhprof.io/)
+
+[New Relic](https://newrelic.com/)
+
+# HHVM and Hack
+
+[HHVM 是如何提升 PHP 性能的？](http://wuduoyi.com/note/hhvm/)
+
+[Hack Lang](http://blog.jobbole.com/63613/)
