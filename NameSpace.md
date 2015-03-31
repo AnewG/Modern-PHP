@@ -107,3 +107,7 @@ class Foo {
     }
 }
 ```
+
+[namespace 官方手册参考](http://php.net/manual/en/language.namespaces.php) 
+
+PS：中文版手册该章节有错误，请以英文版为准。
