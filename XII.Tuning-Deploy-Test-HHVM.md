@@ -4,7 +4,9 @@
 
 ### 内存
 
-`memory_limit`
+主要是针对 `memory_limit` 的设置。
+
+相关 Q&A
 
 Q：总共能分配多少内存给PHP ? 
 
