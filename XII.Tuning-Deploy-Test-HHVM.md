@@ -119,11 +119,15 @@ BDD的重点是通过与利益相关者的讨论取得对预期的软件行为�
 
 [TravisCI](https://travis-ci.org/)
 
-# 性能分析
+# 性能分析 & 调试工具
 
 [XDebug](http://xdebug.org/)
 
 [Xhprof](http://xhprof.io/)
+
+[Z-Ray](http://www.zend.com/en/products/server/z-ray-use-cases)
+
+[简化PHP开发—Z-Ray的应用](http://code.csdn.net/news/2821335)
 
 [New Relic](https://newrelic.com/)
 
