@@ -79,6 +79,8 @@ realpath_cache_size = 64k
 
 [Rocketeer](http://rocketeer.autopergamene.eu/#/docs/rocketeer/README)
 
+[PuPHPet](https://puphpet.com/#deploy-target)
+
 # 测试
 
 ## 单元测试
