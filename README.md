@@ -23,3 +23,7 @@
 11.PHP-FPM
 
 12.Tuning-Deploy-Test-HHVM
+
+## follow amazing PHP developers: framework creators, core contributors and frequent conference speakers.
+
+[followphpdevs.com](http://followphpdevs.com)
