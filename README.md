@@ -27,3 +27,7 @@
 ## follow amazing PHP developers: framework creators, core contributors and frequent conference speakers.
 
 [followphpdevs.com](http://followphpdevs.com)
+
+## PHP7 Website
+
+[PHP7](http://www.php7.site/book/php7.html)
